@@ -1,0 +1,25 @@
+# spotify_to_tidal
+
+> Fork of spotify2tidal/spotify_to_tidal (AGPL-3.0): copies Spotify playlists and likes to Tidal, builds curated Spotify playlists from a JSON list with human approval, and fixes tracks missing on Tidal. Ships a Claude Code plugin (/spotify-tidal:setup, /spotify-tidal:playlist).
+
+## Docs
+
+- [README (English)](readme.md): overview, install, usage, troubleshooting
+- [README (Español)](README.es.md): same content in Spanish
+- [AGENTS.md](AGENTS.md): operating manual for AI agents
+
+## Claude Code plugin
+
+- [Setup skill](plugins/spotify-tidal/skills/setup/SKILL.md): guided install for non-developers
+- [Playlist skill](plugins/spotify-tidal/skills/playlist/SKILL.md): curated playlist workflow, Spotify then Tidal
+- [Marketplace manifest](.claude-plugin/marketplace.json): the repo is its own plugin marketplace
+
+## Tools
+
+- [tools/verify_tracks.py](tools/verify_tracks.py): check candidate tracks exist on Spotify
+- [tools/build_playlist.py](tools/build_playlist.py): create a Spotify playlist from JSON
+- [tools/tidal_find.py](tools/tidal_find.py): search Tidal and add tracks to a playlist
+
+## Examples
+
+- [playlists/covers_cuerdas_saxo_vientos.json](playlists/covers_cuerdas_saxo_vientos.json): 100+ track instrumental covers playlist

@@ -1,0 +1,21 @@
+{
+  "name": "spotify-tidal",
+  "displayName": "Spotify ⇄ Tidal Playlists",
+  "version": "0.1.0",
+  "description": "Build curated playlists on Spotify with your approval and copy them to Tidal. Guided setup for non-developers, verification of every track, replacements for songs missing on Tidal.",
+  "author": {
+    "name": "Nicolas6879"
+  },
+  "license": "AGPL-3.0",
+  "keywords": [
+    "spotify",
+    "tidal",
+    "playlist",
+    "music",
+    "sync",
+    "migration",
+    "playlist-generator"
+  ],
+  "repository": "https://github.com/Nicolas6879/spotify_to_tidal",
+  "homepage": "https://github.com/Nicolas6879/spotify_to_tidal"
+}

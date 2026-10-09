@@ -1,0 +1,14 @@
+{
+  "name": "spotify-tidal-playlists",
+  "owner": {
+    "name": "Nicolas6879"
+  },
+  "plugins": [
+    {
+      "name": "spotify-tidal",
+      "source": "./plugins/spotify-tidal",
+      "description": "Build curated playlists on Spotify with your approval and copy them to Tidal. Guided setup for non-developers, verification of every track, replacements for songs missing on Tidal.",
+      "displayName": "Spotify ⇄ Tidal Playlists"
+    }
+  ]
+}
