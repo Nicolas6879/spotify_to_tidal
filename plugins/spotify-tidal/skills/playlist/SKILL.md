@@ -8,13 +8,13 @@ argument-hint: <what playlist you want, e.g. "instrumental covers with cello and
 
 User request: $ARGUMENTS
 
-Follow these steps in order. Answer in the user's language. Never skip the approval gate in step 3.
+Follow these steps in order. Answer in the user's language. Never skip the approval gate in step 4.
 
 ## Security rules (always)
 
 - NEVER read, print, grep or upload `config.yml`, `.session.yml` or any `.cache*` file.
 - NEVER run `git commit` or `git push`.
-- NEVER remove tracks from the user's libraries or playlists. Do NOT run `--sync-favorites` unless explicitly asked (it adds songs to likes on both services).
+- NEVER remove tracks from the user's existing libraries or playlists (editing the list you are proposing is fine). Do NOT run `--sync-favorites` unless explicitly asked (it adds songs to likes on both services).
 
 ## Quick mode (optional)
 
@@ -23,19 +23,20 @@ If the official Spotify connector for Claude is available (tool `generate_playli
 ## Workflow
 
 1. **Locate the repo.** Use `$SPOTIFY_TO_TIDAL_HOME` if set, else `~/spotify_to_tidal`; it must contain `pyproject.toml`, `tools/build_playlist.py` and `.venv`. If missing, tell the user to run `/spotify-tidal:setup` and stop. Run all commands from the repo root. `<venv python>` is `.venv/Scripts/python.exe` on Windows, `.venv/bin/python` elsewhere.
-2. **Clarify only if vague.** If the request lacks essentials, ask briefly in one message: mood/genre, instruments, reference artists, number of tracks, instrumental or with vocals, which services (Spotify only or also Tidal). Do not interrogate if the request is already clear.
-3. **Propose and wait.** Present a numbered list grouped in themed blocks, each line `artist - title`. State which tracks you are sure exist as described and which are uncertain. Then STOP and wait for explicit approval. Iterate on requested changes until the user approves.
-4. **Write the JSON.** Save `playlists/<slug>.json` (lowercase slug, no spaces) in this format:
+2. **Clarify only if vague.** If the request lacks essentials, ask briefly in one message: mood/genre, instruments, reference artists, number of tracks, instrumental or with vocals, which services (Spotify only or also Tidal), and the user's country (ISO code, e.g. CO, MX, ES, US; it decides which tracks are available). Skip anything the user already said; do not interrogate if the request is already clear. Default country: US.
+3. **Draft and verify (read-only).** Pick candidates, then save them as `playlists/<slug>.json` (lowercase slug, no spaces) in this format:
    ```json
    {"name": "...", "description": "...", "public": false,
     "tracks": [{"artist": "...", "title": "..."}, {"uri": "spotify:track:..."}]}
    ```
-5. **Dry-run and clean.** Ask the user's country once (ISO code, e.g. CO, MX, ES, US) and run:
+   and run the dry-run, which only searches and creates nothing:
    `SPOTIFY_MARKET=<CC> <venv python> tools/build_playlist.py playlists/<slug>.json --dry-run`
    (PowerShell: `$env:SPOTIFY_MARKET="<CC>"; ...`). Read EVERY line:
-   - `OK  wanted -> matched (artists)`: remove or fix false matches: a different artist with the same surname, karaoke/tribute/"originally performed by", versions with vocals when instrumental was requested, live/remix/sped-up when not wanted.
-   - `NO  artist - title`: search alternatives (correct the spelling, use another performer of the same song, or put a `uri` directly) and re-run. For bulk checks `tools/verify_tracks.py candidates.json results.json` also works.
-   Repeat until clean. Tell the user exactly what changed (removed, swapped, added).
+   - `OK  wanted -> matched (artists)`: drop or fix false matches: a different artist with the same surname, karaoke/tribute/"originally performed by", versions with vocals when instrumental was requested, live/remix/sped-up when not wanted.
+   - `NO  artist - title`: try alternatives (correct the spelling, another performer of the same song, or a `uri` directly) and re-run.
+   Repeat until every track resolves to the right recording.
+4. **Propose and wait.** Present the verified list numbered and grouped in themed blocks, each line `artist - title` as found on Spotify, plus a short note of what you dropped or swapped and why. Then STOP and wait for explicit approval. If the user asks for changes, edit the JSON, re-run the dry-run and show the list again.
+5. **Final check.** If the JSON changed since the last dry-run, run the dry-run once more and fix any new false matches.
 6. **Create on Spotify.** Run the same command without `--dry-run`. Capture the playlist id and URL printed at the end.
 7. **Copy to Tidal** (skip if the user wants Spotify only): `<venv python> -m spotify_to_tidal --uri <playlist id>`. Parse lines containing `Could not find the track`. For each one:
    - run `<venv python> tools/tidal_find.py "<artist> <title>"` (output lines: `track_id | artist - title`),

@@ -43,14 +43,13 @@ SPOTIFY_MARKET=CO <venv python> tools/build_playlist.py playlists/x.json   # pri
 
 Full instructions: `plugins/spotify-tidal/skills/playlist/SKILL.md`. Install guide: `plugins/spotify-tidal/skills/setup/SKILL.md`.
 
-1. Clarify only if vague.
-2. Propose a numbered list in themed blocks; WAIT for approval.
-3. Write `playlists/<slug>.json`.
-4. Dry-run with `SPOTIFY_MARKET`, read every `OK`/`NO` line, drop false matches (wrong artist, karaoke, vocals when instrumental, unwanted live/remix).
-5. Create without `--dry-run`.
-6. Copy with `--uri`.
-7. For each `Could not find the track`, use `tidal_find.py`, propose a replacement, add after the user's OK.
-8. Report links, counts, replacements, removals.
+1. Clarify only if vague (include the user's country for `SPOTIFY_MARKET`).
+2. Write `playlists/<slug>.json` and dry-run it (read-only): read every `OK`/`NO` line, drop false matches (wrong artist, karaoke, vocals when instrumental, unwanted live/remix), fix misses.
+3. Propose the verified list in themed blocks; WAIT for approval. Re-run the dry-run after any change.
+4. Create without `--dry-run`.
+5. Copy with `--uri`.
+6. For each `Could not find the track`, use `tidal_find.py`, propose a replacement, add after the user's OK.
+7. Report links, counts, replacements, removals.
 
 ## Safety rules
 
