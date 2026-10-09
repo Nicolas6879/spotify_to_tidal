@@ -1,5 +1,6 @@
 {
   "name": "spotify-tidal-playlists",
+  "description": "Build AI-curated playlists with Claude and keep Spotify and Tidal in sync.",
   "owner": {
     "name": "Nicolas6879"
   },
