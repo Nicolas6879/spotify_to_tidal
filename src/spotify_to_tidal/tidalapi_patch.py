@@ -1,6 +1,8 @@
 import asyncio
 import math
+import time
 from typing import List
+import requests
 import tidalapi
 from tqdm import tqdm
 from tqdm.asyncio import tqdm as atqdm
@@ -23,7 +25,16 @@ def add_multiple_tracks_to_playlist(playlist: tidalapi.UserPlaylist, track_ids: 
     with tqdm(desc="Adding new tracks to Tidal playlist", total=len(track_ids)) as progress:
         while offset < len(track_ids):
             count = min(chunk_size, len(track_ids) - offset)
-            playlist.add(track_ids[offset:offset+chunk_size])
+            for attempt in range(5):
+                try:
+                    playlist.add(track_ids[offset:offset+chunk_size])
+                    break
+                except requests.HTTPError as e:
+                    # 412: stale etag right after the previous chunk; refresh and retry
+                    if e.response is None or e.response.status_code != 412 or attempt == 4:
+                        raise
+                    time.sleep(1 + attempt)
+                    playlist._reparse()
             offset += count
             progress.update(count)
 
