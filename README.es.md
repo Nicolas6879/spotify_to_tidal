@@ -24,8 +24,7 @@
 9. [Solución de problemas](#solución-de-problemas)
 10. [Preguntas frecuentes](#preguntas-frecuentes)
 11. [Estructura del proyecto](#estructura-del-proyecto)
-12. [Apoya el proyecto](#apoya-el-proyecto)
-13. [Créditos y licencia](#créditos-y-licencia)
+12. [Créditos y licencia](#créditos-y-licencia)
 
 ## Qué hace
 
@@ -352,14 +351,6 @@ spotify_to_tidal/
 ├── pyproject.toml
 └── LICENSE
 ```
-
-## Apoya el proyecto
-
-<!-- TODO: reemplaza REPLACE_ME por el usuario real de Buy Me a Coffee y el handle de GitHub Sponsors -->
-Si esto te ahorró tiempo, puedes apoyar el proyecto:
-
-- [Invítame un café](https://buymeacoffee.com/REPLACE_ME)
-- [GitHub Sponsors](https://github.com/sponsors/REPLACE_ME)
 
 ## Créditos y licencia
 

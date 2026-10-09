@@ -24,8 +24,7 @@
 9. [Troubleshooting](#troubleshooting)
 10. [FAQ](#faq)
 11. [Project structure](#project-structure)
-12. [Support the project](#support-the-project)
-13. [Credits and license](#credits-and-license)
+12. [Credits and license](#credits-and-license)
 
 ## What it does
 
@@ -352,14 +351,6 @@ spotify_to_tidal/
 ├── pyproject.toml
 └── LICENSE
 ```
-
-## Support the project
-
-<!-- TODO: replace REPLACE_ME with the real Buy Me a Coffee username and GitHub Sponsors handle -->
-If this saved you time, you can support the project:
-
-- [Buy me a coffee](https://buymeacoffee.com/REPLACE_ME)
-- [GitHub Sponsors](https://github.com/sponsors/REPLACE_ME)
 
 ## Credits and license
 
