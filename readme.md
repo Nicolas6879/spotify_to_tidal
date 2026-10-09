@@ -1,9 +1,12 @@
 # spotify_to_tidal
 
-**Copy your Spotify playlists and liked songs to Tidal, keep them in sync, and even let an AI assistant build new playlists for you.**
+**Describe a playlist, approve the list, and get it on Spotify and Tidal.**
+
+Ask Claude for a playlist in plain words. It proposes the songs, checks that each one really exists, and only after your OK creates the playlist on Spotify and copies it to Tidal, finding replacements for anything Tidal lacks. It also syncs your existing Spotify playlists and likes to Tidal.
 
 [![License: AGPL-3.0](https://img.shields.io/badge/license-AGPL--3.0-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757?logo=anthropic&logoColor=white)](#use-it-from-claude-code-plugin)
 ![Spotify](https://img.shields.io/badge/Spotify-1DB954?logo=spotify&logoColor=white)
 ![Tidal](https://img.shields.io/badge/Tidal-000000?logo=tidal&logoColor=white)
 
@@ -11,20 +14,57 @@
 
 > This is a fork of [spotify2tidal/spotify_to_tidal](https://github.com/spotify2tidal/spotify_to_tidal), maintained at [Nicolas6879/spotify_to_tidal](https://github.com/Nicolas6879/spotify_to_tidal).
 
+## 30-second demo
+
+**You say:**
+
+```text
+/spotify-tidal:playlist instrumental covers with cello, violin and sax like 2CELLOS, Lucky Chops, MEUTE + movie themes
+```
+
+**You get:** a 101-track playlist on Spotify, built from a list you approved and checked track by track. On Tidal, 98 tracks matched automatically and 3 were replaced with alternatives you chose.
+
+**Install in 3 lines** (inside Claude Code):
+
+```text
+/plugin marketplace add Nicolas6879/spotify_to_tidal
+/plugin install spotify-tidal@spotify-tidal-playlists
+/spotify-tidal:setup
+```
+
 ## Table of contents
 
-1. [What it does](#what-it-does)
-2. [What this fork adds](#what-this-fork-adds)
-3. [How it works](#how-it-works)
-4. [For non-developers](#for-non-developers)
-5. [Quick start for developers](#quick-start-for-developers)
-6. [Detailed setup](#detailed-setup)
-7. [Usage](#usage)
-8. [Limitations and good to know](#limitations-and-good-to-know)
-9. [Troubleshooting](#troubleshooting)
-10. [FAQ](#faq)
-11. [Project structure](#project-structure)
-12. [Credits and license](#credits-and-license)
+1. [30-second demo](#30-second-demo)
+2. [Use it from Claude Code (plugin)](#use-it-from-claude-code-plugin)
+3. [What it does](#what-it-does)
+4. [What this fork adds](#what-this-fork-adds)
+5. [How it works](#how-it-works)
+6. [For non-developers](#for-non-developers)
+7. [Quick start for developers](#quick-start-for-developers)
+8. [Detailed setup](#detailed-setup)
+9. [Usage](#usage)
+10. [Limitations and good to know](#limitations-and-good-to-know)
+11. [Troubleshooting](#troubleshooting)
+12. [FAQ](#faq)
+13. [For AI assistants](#for-ai-assistants)
+14. [Project structure](#project-structure)
+15. [Credits and license](#credits-and-license)
+
+## Use it from Claude Code (plugin)
+
+This repo is also a Claude Code plugin marketplace. Inside Claude Code:
+
+```text
+/plugin marketplace add Nicolas6879/spotify_to_tidal
+/plugin install spotify-tidal@spotify-tidal-playlists
+/spotify-tidal:setup
+/spotify-tidal:playlist instrumental covers with cello and sax, 40 songs
+```
+
+| Skill | What it does |
+|---|---|
+| `/spotify-tidal:setup` | Guided install for non-developers: checks Python and git, clones the repo, creates the virtual environment, walks you through the Spotify developer app, and does a login-only first run (creates nothing). You type your credentials into `config.yml` yourself, never in the chat. |
+| `/spotify-tidal:playlist <request>` | The curated workflow: proposes a list for your approval, verifies every track, removes false matches, creates the playlist on Spotify, copies it to Tidal and proposes replacements for missing songs. It can also use the official Spotify connector (`generate_playlist`) as a quick mode. |
 
 ## What it does
 
@@ -54,7 +94,8 @@
 
 ```mermaid
 flowchart LR
-    U["You"] --> AI["AI assistant (Claude)"]
+    U["You"] --> P["Claude Code plugin: /spotify-tidal:setup and :playlist"]
+    P --> AI["AI assistant (Claude)"]
     AI --> V["tools/verify_tracks.py"]
     V --> B["tools/build_playlist.py"]
     B --> SP["Spotify Web API"]
@@ -114,7 +155,19 @@ It is a small program that moves your music between Spotify and Tidal. On top of
 - A computer (Windows, macOS or Linux).
 - An **AI assistant that can run commands on your computer**, such as Claude Code or the Claude desktop app.
 
-### Paste this into your Claude or AI assistant
+### Easiest path: the Claude Code plugin
+
+If you use Claude Code, install the plugin and let it guide you (see [Use it from Claude Code](#use-it-from-claude-code-plugin)):
+
+```text
+/plugin marketplace add Nicolas6879/spotify_to_tidal
+/plugin install spotify-tidal@spotify-tidal-playlists
+/spotify-tidal:setup
+```
+
+### Alternative: paste this into your Claude or AI assistant (no plugin needed)
+
+Use this if your assistant does not support plugins.
 
 ````text
 You are my setup assistant. Help me install and use the project
@@ -330,10 +383,29 @@ SPOTIFY_MARKET=MX python tools/build_playlist.py playlists/my_playlist.json --dr
 
 **Is it affiliated with Spotify or Tidal?** No.
 
+## For AI assistants
+
+- [AGENTS.md](AGENTS.md): operating manual (layout, exact commands, JSON format, safety rules, known issues). `CLAUDE.md` imports it.
+- [llms.txt](llms.txt): index of the docs and tools for LLMs.
+- [plugins/spotify-tidal/skills/setup/SKILL.md](plugins/spotify-tidal/skills/setup/SKILL.md): guided installation.
+- [plugins/spotify-tidal/skills/playlist/SKILL.md](plugins/spotify-tidal/skills/playlist/SKILL.md): curated playlist workflow.
+
+Never read or print `config.yml`, `.session.yml` or `.cache*` files, and never commit or push unless the user asks.
+
 ## Project structure
 
 ```text
 spotify_to_tidal/
+├── .claude-plugin/
+│   └── marketplace.json   # makes this repo a Claude Code plugin marketplace
+├── plugins/spotify-tidal/
+│   ├── .claude-plugin/plugin.json
+│   └── skills/
+│       ├── setup/SKILL.md     # /spotify-tidal:setup
+│       └── playlist/SKILL.md  # /spotify-tidal:playlist
+├── AGENTS.md              # operating manual for AI agents
+├── CLAUDE.md              # imports AGENTS.md
+├── llms.txt               # docs index for LLMs
 ├── src/spotify_to_tidal/
 │   ├── __main__.py        # command line entry point
 │   ├── auth.py            # Spotify and Tidal login
