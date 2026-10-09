@@ -67,16 +67,21 @@ class MatchFailureDatabase:
 
 class TrackMatchCache:
     """
-    Non-persistent mapping of spotify ids -> tidal_ids
+    Non-persistent mapping of spotify ids <-> tidal_ids
     This should NOT be accessed concurrently from multiple processes
     """
     data: Dict[str, int] = {}
+    reverse_data: Dict[int, str] = {}
 
     def get(self, track_id: str) -> int | None:
         return self.data.get(track_id, None)
 
+    def get_by_tidal_id(self, tidal_id: int) -> str | None:
+        return self.reverse_data.get(tidal_id, None)
+
     def insert(self, mapping: tuple[str, int]):
         self.data[mapping[0]] = mapping[1]
+        self.reverse_data[mapping[1]] = mapping[0]
 
 
 # Main singleton instance
